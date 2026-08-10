@@ -1,0 +1,103 @@
+{
+    "dev" : {
+        "dag_name": "dag_ssm_genera_insumos",
+        "variables":{
+            "project" : "ssm-crudos",
+            "region" : "us-central1",
+            "sa" : "ssm-acount@ssm-crudos.iam.gserviceaccount.com"
+        },
+        "configs":{
+            "dag_owner": "ssm",
+            "max_active_runs": 1,
+            "schedule_interval": "" ,
+            "rt_version": "2.2",
+            "retries": 2,
+            "retries_delay_minutes": 5,
+            "tags" : ["dag_ssm_genera_insumos", "SSM", "genera-insumos"],
+            "execution_timeout_minutes": 40,
+            "batch_id1" : "job-batch-ssm-generar-insumos",
+            "spark_dependencies" : "gs://dependencias_ssm/spark-lib/bigquery/spark-3.5-bigquery-0.41.0.jar",
+            "sql_dependencies" : "gs://dependencias_ssm/conector_jar/mysql-connector-j-9.5.0.jar",
+            "faker_dependencies" : "gs://dependencias_ssm/faker/faker.zip" 
+        },
+        "job_batch_ssm_generar_insumos": {
+            "python_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs/job_batch_ssm_generar_insumos.py",
+            "config_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs_config/settings_job_batch_ssm_generar_insumos.py",
+            "properties": {
+                "spark.executor.memory": "8g",
+                "spark.driver.cores": "4",
+                "spark.driver.memory": "8g",
+                "spark.executor.cores": "4",
+                "spark.dynamicAllocation.enabled": "true",
+                "spark.dynamicAllocation.initialExecutors": "2",
+                "spark.dynamicAllocation.minExecutors": "2",
+                "spark.dynamicAllocation.maxExecutors": "2",
+                "spark.dataproc.scaling.version": "2",
+                "spark.dataproc.executor.disk.size": "250g",
+                "spark.dataproc.driver.disk.size": "250g",
+                "spark.network.timeout": "600s",
+                "spark.executor.heartbeatInterval": "30s",
+                "spark.sql.shuffle.partitions": "600",
+                "spark.default.parallelism": "600",
+                "spark.sql.avro.datetimeRebaseModeInRead": "LEGACY",
+                "spark.sql.parquet.datetimeRebaseModeInWrite": "CORRECTED",
+                "spark.sql.avro.datetimeRebaseModeInWrite": "LEGACY",
+                "spark.sql.parquet.int96RebaseModeInWrite": "CORRECTED",    
+                "spark.jars.packages": "org.apache.spark:spark-avro_2.13:3.5.0",
+                "spark.sql.autoBroadcastJoinThreshold": "10485760",
+                "spark.dataproc.lineage.enabled": "true",
+                "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
+            }
+        }
+    },
+    "prod" : {
+        "dag_name": "dag_ssm_genera_insumos",
+        "variables":{
+            "project" : "ssm-crudos-prod",
+            "region" : "us-central1",
+            "sa" : "ssm-acount@ssm-crudos-prod.iam.gserviceaccount.com"
+        },
+        "configs":{
+            "dag_owner": "ssm",
+            "max_active_runs": 1,
+            "schedule_interval": "" ,
+            "rt_version": "2.2",
+            "retries": 2,
+            "retries_delay_minutes": 5,
+            "execution_timeout_minutes": 40,
+            "batch_id1" : "job-batch-ssm-generar-insumos"
+        },
+        "job_batch_ssm_generar_insumos": {
+            "python_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs/job_batch_ssm_generar_insumos.py",
+            "config_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs_config/settings_job_batch_ssm_generar_insumos.py",
+            "properties": {
+                "spark.executor.memory": "8g",
+                "spark.driver.cores": "4",
+                "spark.driver.memory": "8g",
+                "spark.executor.cores": "4",
+                "spark.dynamicAllocation.enabled": "true",
+                "spark.dynamicAllocation.initialExecutors": "2",
+                "spark.dynamicAllocation.minExecutors": "2",
+                "spark.dynamicAllocation.maxExecutors": "2",
+                "spark.dataproc.scaling.version": "2",
+                "spark.dataproc.executor.disk.size": "100g",
+                "spark.dataproc.driver.disk.size": "100g",
+                "spark.network.timeout": "600s",
+                "spark.executor.heartbeatInterval": "30s",
+                "spark.sql.shuffle.partitions": "600",
+                "spark.default.parallelism": "600",
+                "spark.sql.avro.datetimeRebaseModeInRead": "LEGACY",
+                "spark.sql.parquet.datetimeRebaseModeInWrite": "CORRECTED",
+                "spark.sql.avro.datetimeRebaseModeInWrite": "LEGACY",
+                "spark.sql.parquet.int96RebaseModeInWrite": "CORRECTED",    
+                "spark.jars.packages": "org.apache.spark:spark-avro_2.13:3.5.0",
+                "spark.sql.autoBroadcastJoinThreshold": "10485760",
+                "spark.dataproc.lineage.enabled": "true",
+                "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
+                
+            }
+        }
+    }
+    
+
+}

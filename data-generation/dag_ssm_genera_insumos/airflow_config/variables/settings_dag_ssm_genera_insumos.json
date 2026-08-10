@@ -1,0 +1,5 @@
+{
+    "bucket_configuracion": "ssm-workspaces/generador-insumos/dag_smm_genera_insumos/airflow_config/dag_config",
+    "file_configuracion" : "settings_dag_smm_genera_insumos.json",
+    "project_env" : "dev"
+}
