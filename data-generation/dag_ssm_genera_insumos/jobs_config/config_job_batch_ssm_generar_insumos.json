@@ -1,0 +1,427 @@
+{
+    "parametros": {
+        "seed": 82,
+        "hr_min_atencion": 4,
+        "max_dias_atencion": 14,
+        "hr_min_consultas": 7,
+        "hr_max_consultas": 22,
+        "t_reser_consulta_mean": 1,
+        "t_reser_consulta_limit": 360,
+        "max_intentos" : 10
+    },
+
+    "info": {
+        "alta_complejidad_limit": 0.9,
+        "t_consulta_externa_mean": 45,
+        "t_consulta_externa_limit": 180,
+        "fecha_fundacion": "1987-03-21"
+    },
+
+    "tablas": {
+        "bucket": "gs://ssm-crudos-data",
+        "pac_registro_len": 100000,
+        "med_planta_len": 200000,
+        "red_sedes_len": 82,
+        "hce_encuentros_len": 2000000,
+        "gcm_camas_len": 500000,
+        "far_dispensacion_len": 3000000,
+        "age_citas_len": 1500000,
+
+        "pac_registro_cols": ["pac_id","tip_doc","num_doc_hash","fec_nac","genero","id_ciudad_res","ciudad_res","tip_aseguradora","id_eps","eps","estrato_socioec","fec_primer_atencion","activo"],
+        "med_planta_cols": ["med_id","esp_principal","esp_secundaria","id_sede","fec_ingreso","tip_contrato","jornada","estado_activo"],
+        "red_sedes_cols": ["id_sede","nom_sede","tip_sede","id_ciudad","id_pais","cap_camas_gen","cap_camas_uci","cap_camas_cirugia","cap_camas_urg","nivel_complejidad"],
+        "hce_encuentros_cols": ["id_encuentro","pac_id","med_id","id_sede","fec_registro","fec_inicio_atencion","fec_egreso","tip_consulta","esp_atendida","diag_principal_cie10","diag_sec1_cie10","cod_procedimientos","vr_facturado","estado_factura"],
+        "gcm_camas_cols": ["id_registro_cama","id_sede","tip_unidad","fec_hora_registro","num_camas_ocupadas","num_camas_disp","num_camas_mant","motivo_indisponibilidad"],
+        "far_dispensacion_cols": ["id_dispensacion","id_encuentro","pac_id","id_sede","fec_dispensacion","cod_medicamento","nombre_medicamento","cantidad","vr_unitario","tip_prescripcion"],
+        "age_citas_cols": ["id_cita","pac_id","med_id","id_sede","fec_agendamiento","fec_cita_programada","hra_cita_programada","hra_llegada_paciente","hra_inicio_atencion","esp_solicitada","tip_cita","estado_cita"]
+    },
+
+    "pac_registro": {
+        "docs_col": ["Identificacion de extranjero","Licencia de conducir","Tarjeta de identificacion","Identificacion de menores","Pasaporte"],
+
+        "docs_ecu": ["Licencia de conducir","Tarjeta de identificacion","Identificacion de menores"],
+
+        "docs_peru": ["Licencia de conducir","Tarjeta de identificacion","Identificacion de menores","Pasaporte"],
+
+        "ext_peru": 8,
+        "ext_gral": 10,
+
+        "generos": {"Masculino": 0.49,"Femenino": 0.495,"null": 0.05
+        },
+
+        "tips_aseguradoras": ["Medicina prepagada","Poliza de salud","Planes complementarios","Seguros de hospitalizacion y cirugia","Seguros dentales",null],
+
+        "estratos": {"Bajo": 0.491,"Medio": 0.435,"Alto": 0.024,"null": 0.05
+        },
+
+        "min_age": 0,
+        "max_age": 116,
+
+        "ciudades": {"1": "Aguachica","2": "Agustin Codazzi","3": "Apartado","4": "Arauca","5": "Arjona","6": "Armenia","7": "Ayapel","8": "Baranoa","9": "Barbosa","10": "Barrancabermeja","11": "Bello","12": "Bucaramanga","13": "Buenaventura","14": "Calarca","15": "Caldas","16": "Cali","17": "Cartagena de Indias","18": "Cartago","19": "Caucasia","20": "Cerete","21": "Chia","22": "Chigorodo","23": "Chinchina","24": "Chinu","25": "Cienaga","26": "Cimitarra","27": "Ciudad de Girardot","28": "Cucuta","29": "Dos Quebradas","30": "Duitama","31": "El Bagre","32": "El Banco","33": "Envigado","34": "Espinal","35": "Facatativa","36": "Florencia","37": "Floridablanca","38": "Funza","39": "Fusagasuga","40": "Giron","41": "Guadalajara de Buga","42": "Ibague","43": "Ipiales","44": "Itagui","45": "La Arenosa","46": "La Dorada","47": "Los Patios","48": "Madrid","49": "Magangue","50": "Maicao","51": "Malambo","52": "Manizales","53": "Marinilla","54": "Medellin","55": "Mocoa","56": "Montelibano","57": "Monteria","58": "Neiva","59": "Ocana","60": "Orito","61": "Palmira","62": "Pamplona","63": "Pasto","64": "Pereira","65": "Piedecuesta","66": "Pitalito","67": "Planeta Rica","68": "Popayan","69": "Puerto Berrio","70": "Quibdo","71": "Riohacha","72": "Rionegro","73": "Sabanalarga","74": "Sahagun","75": "San Andres","76": "San Jose del Guaviare","77": "San Marcos","78": "Santa Marta","79": "Santa Rosa de Cabal","80": "Santafe de Bogota","81": "Santander de Quilichao","82": "Sincelejo","83": "Soacha","84": "Sogamoso","85": "Soledad","86": "Tulua","87": "Tumaco","88": "Tunja","89": "Turbaco","90": "Turbo","91": "Valledupar","92": "Villa del Rosario","93": "Villavicencio","94": "Yopal","95": "Yumbo","96": "Zipaquira",
+                        "97": "Ambato","98": "Babahoyo","99": "Canton Ibarra","100": "Cuenca","101": "Daule","102": "Duran","103": "Esmeraldas","104": "Guayaquil","105": "La Libertad","106": "Latacunga","107": "Loja","108": "Machala","109": "Manta","110": "Milagro","111": "Portoviejo","112": "Quevedo","113": "Quito","114": "Riobamba","115": "Santo Domingo de los Colorados","116": "Tulcan",
+                        "117": "Abancay","118": "Arequipa","119": "Ayacucho","120": "Brena","121": "Cajamarca","122": "Catacaos","123": "Cerro de Pasco","124": "Chiclayo","125": "Chilca","126": "Chimbote","127": "Chincha Alta","128": "Chosica","129": "Chulucanas","130": "Ciudad Satelite","131": "Cusco","132": "El Callao","133": "Huacho","134": "Huancayo","135": "Huanuco","136": "Huaral","137": "Huaraz","138": "Ica","139": "Ilo","140": "Iquitos","141": "Jaen","142": "Jesus Maria","143": "Juliaca","144": "Lima","145": "Moquegua","146": "Moyobamba","147": "Paita","148": "Pisco","149": "Piura","150": "Pucallpa","151": "Puerto Maldonado","152": "Puno","153": "San Fernando (Pucallpa)","154": "San Francisco de Borja","155": "San Isidro","156": "San Juan","157": "San Martin","158": "Santa Anita - Los Ficus","159": "Santiago","160": "Selva Alegre","161": "Sullana","162": "Tacna","163": "Talara","164": "Tarma","165": "Tingo Maria","166": "Trujillo","167": "Tumbes","168": "Wanchaq"
+        },
+
+        "eps_list": {"1": "Aliansalud","2": "Cafam EPS","3": "Capital Salud EPS","4": "Capresoca","5": "Colsubsidio","6": "COMFANDI","7": "Compensar","8": "Coomeva","9": "Coosalud","10": "EPS Sanitas","11": "EPS Sura","12": "Famisanar","13": "Medimas","14": "Mutual SER","15": "Nueva EPS","16": "Salud Total","17": "Savia Salud EPS","18": "SISBEN IV"
+        }
+    },
+
+    "med_planta": {
+        "tips_contratos": {
+            "Laboral": 0.59,
+            "Prestacion de Servicios": 0.30,
+            "Temporal": 0.06,
+            "null": 0.05
+        },
+
+        "tips_jornadas": {
+            "Ordinaria": 0.57,
+            "Por turnos": 0.30,
+            "Maxima legal": 0.05,
+            "Flexible": 0.04,
+            "null": 0.04
+        },
+
+        "min_age_med": 23,
+        "max_age_med": 70
+    },
+
+    "red_sedes": {
+        "tips_sedes": {
+            "Hospital de alta complejidad": 3,
+            "Clinica de mediana complejidad": 16,
+            "Centro medico ambulatorio": 42,
+            "Centro de diagnostico especializado": 21
+        },
+
+        "tips_unidades": [
+            "General",
+            "UCI",
+            "Cirugia",
+            "Urgencias"
+        ],
+
+        "camas_limit": 500000
+    },
+
+    "especialidades": {
+        "1": {
+            "especialidad": "Alergologia",
+            "subespecialidades": [
+                "Alergologia clinica"
+            ]
+        },
+        "2": {
+            "especialidad": "Anestesiologia",
+            "subespecialidades": [
+                "Anestesiologia y reanimacion",
+                "Anestesiologia y medicina perioperatoria"
+            ]
+        },
+        "3": {
+            "especialidad": "Cardiologia",
+            "subespecialidades": [
+                "Cardiologia clinica",
+                "Cardiologia de adultos"
+            ]
+        },
+        "4": {
+            "especialidad": "Cardiologia pediatrica",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "5": {
+            "especialidad": "Cardiologia intervencionista y hemodinamia",
+            "subespecialidades": [
+                "Cardiologia hemodinamica",
+                "Cardiologia intervencionista",
+                "Hemodinamia y cardiologia intervencionista",
+                "Cardiologia intervencionista y hemodinamica",
+                "Cardiologia intervencionista y hemodinamia"
+            ]
+        },
+        "6": {
+            "especialidad": "Cirugia cardiovascular",
+            "subespecialidades": [
+                "Cirugia cardiovascular y toracica"
+            ]
+        },
+        "7": {
+            "especialidad": "Cirugia de cabeza y cuello",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "8": {
+            "especialidad": "Cirugia de mano",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "9": {
+            "especialidad": "Cirugia de torax",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "10": {
+            "especialidad": "Cirugia general",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "11": {
+            "especialidad": "Cirugia de trasplantes",
+            "subespecialidades": [
+                "Cirugia de trasplantes de organos abdominales"
+            ]
+        },
+        "12": {
+            "especialidad": "Cirugia pediatrica",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "13": {
+            "especialidad": "Cirugia oncologica",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "14": {
+            "especialidad": "Cirugia plastica, reconstructiva y estetica",
+            "subespecialidades": [
+                "Cirugia plastica",
+                "Cirugia plastica, estetica y reconstructiva",
+                "Cirugia plastica, estetica, maxilofacial y de la mano",
+                "Cirugia plastica, maxilofacial y de la mano"
+            ]
+        },
+        "15": {
+            "especialidad": "Cirugia vascular periferica",
+            "subespecialidades": [
+                "Cirugia vascular",
+                "Cirugia vascular y angiologia",
+                "Cirugia vascular periferica y angiologia"
+            ]
+        },
+        "16": {
+            "especialidad": "Coloproctologia",
+            "subespecialidades": [
+                null
+            ]
+        },
+        "17": {
+            "especialidad": "Dermatologia",
+            "subespecialidades": [
+                "Dermatologia y cirugia dermatologica"
+            ]
+        },
+        "18": {
+            "especialidad": "Electrofisiologia cardiaca",
+            "subespecialidades": [
+                "Electrofisiologia cardiovascular",
+                "Electrofisiologia clinica, marcapasos y arritmias cardiacas",
+                "Electrofisiologia cardiaca"
+            ]
+        },
+        "19": {
+            "especialidad": "Endocrinologia",
+            "subespecialidades": [
+                "Endocrinologia clinica y metabolismo",
+                "Endocrinologia, diabetes y metabolismo del adulto"
+            ]
+        },
+        "20": {
+            "especialidad": "Endocrinologia pediatrica",
+            "subespecialidades": [
+                null
+            ]
+        }
+    },
+
+    "cie10": {
+        "Alergologia": ["J30","J45","L50","T78.4"],
+        "Anestesiologia": ["Z01.8","Z51.4","G89","R52"],
+        "Cardiologia": ["I10","I11","I20","I21","I25","I42","I48","I50"],
+        "Cardiologia pediatrica": ["Q20","Q21","Q22","Q23","Q24","Q25"],
+        "Cardiologia intervencionista y hemodinamia": ["I20","I21","I25","I34","I35","I48"],
+        "Cirugia cardiovascular": ["I25","I34","I35","I71","I50"],
+        "Cirugia de cabeza y cuello": ["C00","C01","C02","C03","C04","C05","C06","C09","C10","C11","C12","C13","C14"],
+        "Cirugia de mano": ["S62","S63","M65","G56","M18"],
+        "Cirugia de torax": ["C34","J18","J44","J86","J98"],
+        "Cirugia general": ["K35","K40","K42","K56","K80","K81","K85"],
+        "Cirugia de trasplantes": ["T86","Z94","K72","N18"],
+        "Cirugia pediatrica": ["K35","K40","Q38","Q39","Q42"],
+        "Cirugia oncologica": ["C00","C18","C20","C34","C50","C61","C64","C67","C73"],
+        "Cirugia plastica, reconstructiva y estetica": ["S02","S62","S81","T20","T21","T22","T23"],
+        "Cirugia vascular periferica": ["I70","I71","I73","I74","I80","I83"],
+        "Coloproctologia": ["K50","K51","K62","K63","K64","C18","C20"],
+        "Dermatologia": ["L20","L30","L40","L50","L70","C43","C44"],
+        "Electrofisiologia cardiaca": ["I44","I45","I47","I48","I49"],
+        "Endocrinologia": ["E03","E04","E05","E10","E11","E66","E78"],
+        "Endocrinologia pediatrica": ["E10","E11","E30","E34","E66"]
+    },
+
+    "procedimientos": {
+        "Alergologia": "2726",
+        "Anestesiologia": "4298",
+        "Cardiologia": "2724",
+        "Cardiologia pediatrica": "2725",
+        "Cardiologia intervencionista y hemodinamia": "0637",
+        "Cirugia cardiovascular": "0636",
+        "Cirugia de cabeza y cuello": "1443",
+        "Cirugia de torax": "1449",
+        "Cirugia general": "3159",
+        "Cirugia de trasplantes": "3172",
+        "Cirugia pediatrica": "1092",
+        "Cirugia oncologica": "1734",
+        "Cirugia plastica, reconstructiva y estetica": "2726",
+        "Cirugia vascular periferica": "0714",
+        "Coloproctologia": "0705",
+        "Dermatologia": "3061",
+        "Electrofisiologia cardiaca": "1270",
+        "Endocrinologia": "1487",
+        "Endocrinologia pediatrica": "1494",
+        "Cirugia de mano": "3159"
+    },
+
+    "vrs": {"2726": 150000,"4298": 200000,"2724": 180000,"2725": 180000,"0637": 2500000,"0636": 4500000,"1443": 900000,"1449": 1200000,"3159": 800000,"3172": 5000000,"1092": 1000000,"1734": 1800000,"0714": 2200000,"0705": 1000000,"3061": 180000,"1270": 1500000,"1487": 180000,"1494": 180000
+    },
+
+    "medicamentos": {
+        "MED001": {
+            "nombre": "Acetaminofén 500 mg",
+            "precio": 850
+        },
+        "MED002": {
+            "nombre": "Ibuprofeno 400 mg",
+            "precio": 1200
+        },
+        "MED003": {
+            "nombre": "Ibuprofeno 600 mg",
+            "precio": 1800
+        },
+        "MED004": {
+            "nombre": "Naproxeno 250 mg",
+            "precio": 1500
+        },
+        "MED005": {
+            "nombre": "Naproxeno 500 mg",
+            "precio": 2500
+        },
+        "MED006": {
+            "nombre": "Diclofenaco 50 mg",
+            "precio": 1000
+        },
+        "MED007": {
+            "nombre": "Omeprazol 20 mg",
+            "precio": 900
+        },
+        "MED008": {
+            "nombre": "Pantoprazol 40 mg",
+            "precio": 2500
+        },
+        "MED009": {
+            "nombre": "Amoxicilina 500 mg",
+            "precio": 1800
+        },
+        "MED010": {
+            "nombre": "Azitromicina 500 mg",
+            "precio": 3500
+        },
+        "MED011": {
+            "nombre": "Cefalexina 500 mg",
+            "precio": 2000
+        },
+        "MED012": {
+            "nombre": "Metronidazol 500 mg",
+            "precio": 1200
+        },
+        "MED013": {
+            "nombre": "Loratadina 10 mg",
+            "precio": 900
+        },
+        "MED014": {
+            "nombre": "Cetirizina 10 mg",
+            "precio": 1000
+        },
+        "MED015": {
+            "nombre": "Salbutamol 100 mcg",
+            "precio": 18000
+        },
+        "MED016": {
+            "nombre": "Budesonida 200 mcg",
+            "precio": 35000
+        },
+        "MED017": {
+            "nombre": "Losartán 50 mg",
+            "precio": 1200
+        },
+        "MED018": {
+            "nombre": "Losartán 100 mg",
+            "precio": 2000
+        },
+        "MED019": {
+            "nombre": "Enalapril 10 mg",
+            "precio": 1000
+        },
+        "MED020": {
+            "nombre": "Amlodipino 5 mg",
+            "precio": 900
+        },
+        "MED021": {
+            "nombre": "Metformina 850 mg",
+            "precio": 1000
+        },
+        "MED022": {
+            "nombre": "Atorvastatina 20 mg",
+            "precio": 1800
+        },
+        "MED023": {
+            "nombre": "Levotiroxina 50 mcg",
+            "precio": 1200
+        },
+        "MED024": {
+            "nombre": "Furosemida 40 mg",
+            "precio": 900
+        },
+        "MED025": {
+            "nombre": "Hidroclorotiazida 25 mg",
+            "precio": 700
+        },
+        "MED026": {
+            "nombre": "Tramadol 50 mg",
+            "precio": 2500
+        },
+        "MED027": {
+            "nombre": "Ondansetrón 8 mg",
+            "precio": 3000
+        },
+        "MED028": {
+            "nombre": "Dexametasona 4 mg/ml",
+            "precio": 2500
+        },
+        "MED029": {
+            "nombre": "Prednisona 5 mg",
+            "precio": 1000
+        },
+        "MED030": {
+            "nombre": "Heparina 5000 UI/ml",
+            "precio": 7500
+        }
+    },
+
+    "otros": {
+
+        "max_cant_med": 3,
+        "max_dias_med": 14,
+        "max_frec_med": 3,
+
+        "tips_prescripcion": [
+            "Magistral",
+            "Oficial"
+        ]
+    }
+}
