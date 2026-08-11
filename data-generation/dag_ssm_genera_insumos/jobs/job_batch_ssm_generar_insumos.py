@@ -7,6 +7,7 @@ import numpy as np
 
 from collections import OrderedDict
 from datetime import datetime, time, date, timedelta
+
 from faker import Faker
 from pyspark.sql import SparkSession
 
@@ -55,11 +56,13 @@ def generar_matriz_camas(camas_limit, red_sedes_len):
             count_camas += camas
     return matriz
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--init_json", required=True, help="JSON config file (GCS)")
     parser.add_argument("--project", required=True)
     args = parser.parse_args()
+
+    logger.info("Inicia procesamiento")
 
     config = read_json(args.init_json, args.project)
 
@@ -117,8 +120,8 @@ if _name_ == "_main_":
     ext_gral = pac_registro["ext_gral"]
 
     # Convertir "null" del JSON a None de Python
-    generos = { None if clave == "null" else clave: valor for clave, valor in pac_registro["generos"].items()}
-    estratos = { None if clave == "null" else clave: valor for clave, valor in pac_registro["estratos"].items()}
+    generos = OrderedDict((None if clave == "null" else clave, valor) for clave, valor in pac_registro["generos"].items())
+    estratos = OrderedDict((None if clave == "null" else clave, valor) for clave, valor in pac_registro["estratos"].items())
 
     tips_aseguradoras = pac_registro["tips_aseguradoras"]
 
@@ -130,8 +133,8 @@ if _name_ == "_main_":
 
     med_planta = config["med_planta"]
 
-    tips_contratos = {None if clave == "null" else clave: valor for clave, valor in med_planta["tips_contratos"].items()}
-    tips_jornadas = {None if clave == "null" else clave: valor for clave, valor in med_planta["tips_jornadas"].items()}
+    tips_contratos = OrderedDict((None if clave == "null" else clave, valor) for clave, valor in med_planta["tips_contratos"].items())
+    tips_jornadas = OrderedDict((None if clave == "null" else clave, valor) for clave, valor in med_planta["tips_jornadas"].items())
 
     red_sedes = config["red_sedes"]
 
@@ -166,6 +169,7 @@ if _name_ == "_main_":
     
     fec_fund = datetime.strptime(fecha_fundacion, '%Y-%m-%d').date()
 
+    logger.info("Inicia generacion de PAC_REGISTRO")
     #GENERACION DE PAC REGISTRO
     pac_registro = []
 
@@ -244,7 +248,8 @@ if _name_ == "_main_":
     df_pac_registro = df_pac_registro.select(*pac_registro_cols)
 
     #GENERACION DE MED PLANTA
-    
+    logger.info("Inicia generacion de MED_PLANTA")
+
     med_planta = []
 
     for i in range(med_planta_len):
@@ -293,6 +298,8 @@ if _name_ == "_main_":
     df_med_planta = df_med_planta.select(*med_planta_cols)
 
     #GENERACION DE RED SEDES
+
+    logger.info("Inicia generacion de RED_SEDES")
     red_sedes = []
     fake.unique.clear()
 
@@ -349,9 +356,9 @@ if _name_ == "_main_":
 
     df_red_sedes = df_red_sedes.select(*red_sedes_cols)
 
-    df_red_sedes.show()
-
     #GENERACION DE HCE_ENCUENTROS
+    logger.info("Inicia generacion de HCE_ENCUENTROS")
+
     fake.unique.clear()
     hce_encuentros = []
     restantes = hce_encuentros_len
@@ -506,6 +513,8 @@ if _name_ == "_main_":
     df_hce_encuentros = df_hce_encuentros.select(*hce_encuentros_cols)
 
     #GENERACION DE GCM_CAMAS
+    logger.info("Inicia generacion de GCM_CAMAS")
+
     #Se obtienen las horas que necesitaremos, y con ello la fecha de inicio y fin con horas
     horas = int((gcm_camas_len / (len(red_sedes)*4))+1)
     hora_final = datetime.now().replace(minute=0, second=0, microsecond=0)
@@ -587,6 +596,8 @@ if _name_ == "_main_":
     df_gcm_camas = df_gcm_camas.select(*gcm_camas_cols)
 
     #GENERAR FAR_DISPENSACION
+    logger.info("Inicia generacion de FAR_DISPENSACION")
+
     far_dispensacion = []
 
     for i in range(far_dispensacion_len):
@@ -627,7 +638,8 @@ if _name_ == "_main_":
     df_far_dispensacion = df_far_dispensacion.select(*far_dispensacion_cols)
 
     #GENERAR AGE_CITAS
-    
+    logger.info("Inicia generacion de AGE_CITAS")
+
     fake.unique.clear()
 
     age_citas = []

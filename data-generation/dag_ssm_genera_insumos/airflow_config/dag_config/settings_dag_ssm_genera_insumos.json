@@ -18,12 +18,13 @@
             "batch_id1" : "job-batch-ssm-generar-insumos",
             "spark_dependencies" : "gs://dependencias_ssm/spark-lib/bigquery/spark-3.5-bigquery-0.41.0.jar",
             "sql_dependencies" : "gs://dependencias_ssm/conector_jar/mysql-connector-j-9.5.0.jar",
-            "faker_dependencies" : "gs://dependencias_ssm/faker/faker.zip" 
+            "faker_dependencies" : "gs://dependencias_ssm/faker/faker-40.36.0-py3-none-any.whl" 
         },
         "job_batch_ssm_generar_insumos": {
             "python_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs/job_batch_ssm_generar_insumos.py",
-            "config_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs_config/settings_job_batch_ssm_generar_insumos.py",
+            "config_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs_config/config_job_batch_ssm_generar_insumos.json",
             "properties": {
+                "spark.dataproc.pypi.packages": "Faker",
                 "spark.executor.memory": "8g",
                 "spark.driver.cores": "4",
                 "spark.driver.memory": "8g",
@@ -69,8 +70,9 @@
         },
         "job_batch_ssm_generar_insumos": {
             "python_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs/job_batch_ssm_generar_insumos.py",
-            "config_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs_config/settings_job_batch_ssm_generar_insumos.py",
+            "config_file": "gs://ssm-workspaces/generador-insumos/dag_ssm_genera_insumos/jobs_config/config_job_batch_ssm_generar_insumos.json",
             "properties": {
+                "spark.dataproc.pypi.packages": "Faker",
                 "spark.executor.memory": "8g",
                 "spark.driver.cores": "4",
                 "spark.driver.memory": "8g",
